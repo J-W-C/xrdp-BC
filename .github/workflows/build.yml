@@ -1,6 +1,7 @@
 name: build and test
 on:
   push:
+    workflow_dispatch:
     branches-ignore:
       - "gh-pages"
     tags-ignore:
