@@ -184,6 +184,8 @@ xrdp_region_subtract_rect(struct xrdp_region *self, struct xrdp_rect *rect);
 int
 xrdp_region_intersect_rect(struct xrdp_region *self, struct xrdp_rect *rect);
 int
+xrdp_region_get_numrects(struct xrdp_region* self);
+int
 xrdp_region_get_rect(struct xrdp_region *self, int index,
                      struct xrdp_rect *rect);
 

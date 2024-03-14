@@ -114,6 +114,15 @@ xrdp_region_intersect_rect(struct xrdp_region *self, struct xrdp_rect *rect)
     return 0;
 }
 
+/*****************************************************************************/
+/* returns count */
+int
+xrdp_region_get_numrects(struct xrdp_region *self)
+{
+    int count;
+    pixman_region_rectangles(self->reg, &count);
+    return count;
+}
 
 /*****************************************************************************/
 /* returns error */

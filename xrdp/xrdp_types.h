@@ -472,6 +472,12 @@ struct xrdp_wm
 
     /* configuration derived from xrdp.ini */
     struct xrdp_config *xrdp_config;
+
+   /* for painter's use of RFX codec */
+   struct xrdp_encoder *painter_codec_handle;
+   int max_encoding_bytes;
+   char  *encoding;
+   int frame_id;
 };
 
 /* rdp process */

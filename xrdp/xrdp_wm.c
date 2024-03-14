@@ -29,6 +29,16 @@
 #include "log.h"
 #include "string_calls.h"
 
+#ifdef XRDP_RFXCODEC
+ 
+#include "xrdp_encoder.h"
+#include "rfxcodec_encode.h"
+
+#define MAX_RDP_TILES (128 * 128)       /* Per Microsoft max RDP display size  */
+#define MAX_RDP_RECTS ((1 << 16) - 1)   /* Per RDPRFX 2.2.2.3.3 TS_RFX_REGION */
+
+#endif
+ 
 /*****************************************************************************/
 struct xrdp_wm *
 xrdp_wm_create(struct xrdp_process *owner,
@@ -69,6 +79,39 @@ xrdp_wm_create(struct xrdp_process *owner,
 
     /* to store configuration from xrdp.ini */
     self->xrdp_config = g_new0(struct xrdp_config, 1);
+
+#ifdef XRDP_RFXCODEC
+
+    /* If xrdp_mm_create() made an RFX encoder, we'll make one for the painter */
+    if (self->mm->encoder && self->mm->encoder->codec_id == self->session->client_info->rfx_codec_id)
+    {
+        /* Note that while the xrdp_mm_create() call, above, has created an
+         * RFX encoder, we seem to need one with created for BGRA format to
+         * work with the painter's frame buffer.
+         */
+
+        /* XXX - can you change the format of an existing RFX codec? */
+
+        self->painter_codec_handle = (struct xrdp_encoder *)rfxcodec_encode_create(
+                                 self->screen->width,
+                                 self->screen->height,
+                                 RFX_FORMAT_BGRA, 0);
+        if (!self->painter_codec_handle)
+        {
+            LOG_DEVEL(LOG_LEVEL_WARNING, "xrdp_wm_create: rfxcodec_encode_create failed");
+        }
+        else
+        {
+            int meb = self->client_info->max_fastpath_frag_bytes & ~15;
+            meb += sizeof(struct rfx_tile) * MAX_RDP_TILES;
+            meb += sizeof(struct rfx_rect) * MAX_RDP_RECTS;
+            self->max_encoding_bytes = meb;
+            self->encoding = (char *)g_malloc(meb, 0);
+            self->frame_id = 0;
+        }
+    }
+
+#endif /* XRDP_RFXCODEC */
 
     return self;
 }
