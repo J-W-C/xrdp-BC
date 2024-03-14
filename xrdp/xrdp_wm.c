@@ -30,7 +30,7 @@
 #include "string_calls.h"
 
 #ifdef XRDP_RFXCODEC
- 
+
 #include "xrdp_encoder.h"
 #include "rfxcodec_encode.h"
 
@@ -38,7 +38,7 @@
 #define MAX_RDP_RECTS ((1 << 16) - 1)   /* Per RDPRFX 2.2.2.3.3 TS_RFX_REGION */
 
 #endif
- 
+
 /*****************************************************************************/
 struct xrdp_wm *
 xrdp_wm_create(struct xrdp_process *owner,
@@ -93,9 +93,9 @@ xrdp_wm_create(struct xrdp_process *owner,
         /* XXX - can you change the format of an existing RFX codec? */
 
         self->painter_codec_handle = (struct xrdp_encoder *)rfxcodec_encode_create(
-                                 self->screen->width,
-                                 self->screen->height,
-                                 RFX_FORMAT_BGRA, 0);
+                                         self->screen->width,
+                                         self->screen->height,
+                                         RFX_FORMAT_BGRA, 0);
         if (!self->painter_codec_handle)
         {
             LOG_DEVEL(LOG_LEVEL_WARNING, "xrdp_wm_create: rfxcodec_encode_create failed");
